@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">CyberFruits</string>
+    <string name="Photo">Photo</string>
+    <string name="Gallery">Gallery</string>
+    <string name="Start">Start</string>
+    <string name="Exit">EXIT</string>
+    <string name="Credits">Credits</string>
+    <string name="Developers">DEVELOPERS</string>
+    <string name="Guidance">Under the guidance of</string>
+    <string name="GoBack">Go back</string>
+    <string name="Suomi555"><a href="Suomi555">Suomi555</a></string>
+    <string name="ImmortalIdiot"><a href="ImmortalIdiot">ImmortalIdiot</a></string>
+    <string name="AlexanderGorodnikov"><a href="AlexanderGorodnikov">AlexanderGorodnikov</a></string>
+</resources>
