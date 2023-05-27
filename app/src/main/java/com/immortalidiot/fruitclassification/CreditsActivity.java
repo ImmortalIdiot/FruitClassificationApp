@@ -44,6 +44,16 @@ public class CreditsActivity extends AppCompatActivity {
         }
     }
 
+    public void telegramTanyyaako(View v) {
+        try {
+            Intent telegram = new Intent((Intent.ACTION_VIEW));
+            telegram.setData(Uri.parse("https://t.me/@tanyyaako"));
+            startActivity(telegram);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void goBack(View v) {
         finish();
     }

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">CyberFruits</string>
     <string name="Photo">Photo</string>
+    <string name="ClassifiedAs">Classified as:</string>
+    <string name="Confidences">Confidences:</string>
     <string name="Gallery">Gallery</string>
     <string name="Start">Start</string>
     <string name="Exit">EXIT</string>
@@ -10,5 +12,6 @@
     <string name="GoBack">Go back</string>
     <string name="Suomi555"><a href="Suomi555">Suomi555</a></string>
     <string name="ImmortalIdiot"><a href="ImmortalIdiot">ImmortalIdiot</a></string>
+    <string name="Tanyyaako"><a href="Tanyyaako">Tanyyaako</a></string>
     <string name="AlexanderGorodnikov"><a href="AlexanderGorodnikov">AlexanderGorodnikov</a></string>
 </resources>

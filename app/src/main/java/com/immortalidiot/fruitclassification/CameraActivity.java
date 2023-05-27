@@ -12,20 +12,31 @@ import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.immortalidiot.fruitclassification.databinding.ActivityCameraBinding;
+import com.immortalidiot.fruitclassification.ml.Model;
 
+import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -37,6 +48,10 @@ public class CameraActivity extends AppCompatActivity {
     private ImageCapture imageCapture;
     private ActivityResultLauncher<PickVisualMediaRequest> pickVisualLauncher;
 
+    private PreviewView previewView;
+
+    private TextView result;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,13 +60,13 @@ public class CameraActivity extends AppCompatActivity {
         checkAllPermissions();
         bindPreview();
         registerActivityForPickImage();
+        previewView = findViewById(R.id.viewFinder);
+        result = findViewById(R.id.result);
 
 
-        binding.galleryButton.setOnClickListener(v -> {
-            pickVisualLauncher.launch(new PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                    .build());
-        });
+        binding.galleryButton.setOnClickListener(v -> pickVisualLauncher.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build()));
 
         binding.photoButton.setOnClickListener(v -> {
             String name = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
@@ -75,6 +90,7 @@ public class CameraActivity extends AppCompatActivity {
                                     getSavedUri();
                             Toast.makeText(getBaseContext(), text, Toast.LENGTH_LONG).show();
                             Log.d(TAG, text);
+                            toBitmap();
                         }
 
                         @Override
@@ -126,6 +142,7 @@ public class CameraActivity extends AppCompatActivity {
         CameraSelector cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK)
                 .build();
+
         imageCapture = new ImageCapture.Builder().build();
         cameraProviderFuture = ProcessCameraProvider.getInstance(this);
 
@@ -140,6 +157,65 @@ public class CameraActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }, ContextCompat.getMainExecutor(this));
+    }
+
+    private String toBitmap() {
+        Bitmap image = (Bitmap) previewView.getBitmap();
+        if (image != null) {
+            int dimension = Math.min(image.getWidth(), image.getHeight());
+            image = ThumbnailUtils.extractThumbnail(image, dimension, dimension);
+            image = Bitmap.createScaledBitmap(image, 100, 100, false);
+            return classifyImage(image);
+        } return "";
+    }
+
+    private String classifyImage(Bitmap image) {
+        String[] classes = new String[0];
+        int maxPos = 0;
+        try {
+            Model model = Model.newInstance(getApplicationContext());
+
+            // Creates inputs for reference.
+            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 100, 100, 3}, DataType.FLOAT32);
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 100 * 100 * 3);
+            byteBuffer.order(ByteOrder.nativeOrder());
+
+            int[] values = new int[100 * 100];
+            image.getPixels(values, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+            int pixel = 0;
+            for (int i = 0; i < 100; i++){
+                for (int j = 0; j < 100; j++){
+                    int val = values[pixel++];
+                    byteBuffer.putFloat(((val >> 16) & 0xFF) * (1.f / 255.f));
+                    byteBuffer.putFloat(((val >> 8) & 0xFF) * (1.f / 255.f));
+                    byteBuffer.putFloat((val & 0xFF) * (1.f / 255.f));
+                }
+            }
+
+            inputFeature0.loadBuffer(byteBuffer);
+
+            Model.Outputs outputs = model.process(inputFeature0);
+            TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+
+            float[] confidences = outputFeature0.getFloatArray();
+            maxPos = 0;
+            float maxConfidence = 0;
+            for (int i = 0; i < confidences.length; i++) {
+                if (confidences[i] > maxConfidence){
+                    maxConfidence = confidences[i];
+                    maxPos = i;
+                }
+            }
+
+            classes = new String[] {"Apple", "Banana", "Mango", "Pear", "Pineapple", "Red apple"};
+            result.setText(classes[maxPos]);
+            // Releases model resources if no longer used.
+            model.close();
+        } catch (IOException e) {
+            // TODO Handle the exception
+        }
+
+        return classes[maxPos];
     }
 
     public void goBack(View v) {

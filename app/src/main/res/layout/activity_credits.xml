@@ -57,6 +57,23 @@
         app:layout_constraintTop_toBottomOf="@+id/ImmortalIdiotTextView" />
 
     <TextView
+        android:id="@+id/TanyyaakoTextView"
+        android:layout_width="215sp"
+        android:layout_height="48sp"
+        android:layout_marginStart="98sp"
+        android:layout_marginTop="-20sp"
+        android:layout_marginEnd="98sp"
+        android:gravity="center"
+        android:onClick="telegramTanyyaako"
+        android:text="@string/Tanyyaako"
+        android:textColor="@color/red"
+        android:textColorLink="@color/red"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Suomi555TextView" />
+
+    <TextView
         android:id="@+id/AlexanderGorodnikovTextView"
         android:layout_width="236sp"
         android:layout_height="48sp"
