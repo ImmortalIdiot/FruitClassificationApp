@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,7 +47,6 @@ public class CameraActivity extends AppCompatActivity {
     private ActivityCameraBinding binding;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private ImageCapture imageCapture;
-    private ActivityResultLauncher<PickVisualMediaRequest> pickVisualLauncher;
 
     private PreviewView previewView;
 
@@ -55,6 +55,11 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // deactivation of the status bar
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         binding = ActivityCameraBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         checkAllPermissions();
@@ -62,11 +67,6 @@ public class CameraActivity extends AppCompatActivity {
         registerActivityForPickImage();
         previewView = findViewById(R.id.viewFinder);
         result = findViewById(R.id.result);
-
-
-        binding.galleryButton.setOnClickListener(v -> pickVisualLauncher.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build()));
 
         binding.photoButton.setOnClickListener(v -> {
             String name = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
@@ -85,7 +85,9 @@ public class CameraActivity extends AppCompatActivity {
             imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(this),
                     new ImageCapture.OnImageSavedCallback() {
                         @Override
-                        public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                        public void onImageSaved(@NonNull ImageCapture.OutputFileResults
+                                                         outputFileResults) {
+
                             String text = "File has been saves to " + outputFileResults.
                                     getSavedUri();
                             Toast.makeText(getBaseContext(), text, Toast.LENGTH_LONG).show();
@@ -106,10 +108,11 @@ public class CameraActivity extends AppCompatActivity {
     public void checkAllPermissions() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
             ActivityResultLauncher<String[]> launcher = registerForActivityResult(
                     new ActivityResultContracts.RequestMultiplePermissions(), result ->
                             result.forEach((permission, res) -> {
@@ -124,8 +127,8 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void registerActivityForPickImage() {
-        pickVisualLauncher = registerForActivityResult(
-                new ActivityResultContracts.PickVisualMedia(), uri -> {
+        ActivityResultLauncher<PickVisualMediaRequest> pickVisualLauncher =
+                registerForActivityResult( new ActivityResultContracts.PickVisualMedia(), uri -> {
                     if (uri != null) {
                         Log.d("PhotoPicker", "Selected URI: " + uri);
                     } else {
@@ -176,12 +179,15 @@ public class CameraActivity extends AppCompatActivity {
             Model model = Model.newInstance(getApplicationContext());
 
             // Creates inputs for reference.
-            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 100, 100, 3}, DataType.FLOAT32);
+            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(
+                    new int[]{1, 100, 100, 3}, DataType.FLOAT32);
             ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 100 * 100 * 3);
             byteBuffer.order(ByteOrder.nativeOrder());
 
             int[] values = new int[100 * 100];
-            image.getPixels(values, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
+            image.getPixels(values, 0, image.getWidth(), 0, 0,
+                    image.getWidth(), image.getHeight());
+
             int pixel = 0;
             for (int i = 0; i < 100; i++){
                 for (int j = 0; j < 100; j++){
@@ -198,6 +204,7 @@ public class CameraActivity extends AppCompatActivity {
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
             float[] confidences = outputFeature0.getFloatArray();
+
             maxPos = 0;
             float maxConfidence = 0;
             for (int i = 0; i < confidences.length; i++) {
@@ -207,7 +214,7 @@ public class CameraActivity extends AppCompatActivity {
                 }
             }
 
-            classes = new String[] {"Apple", "Banana", "Mango", "Pear", "Pineapple", "Red apple"};
+            classes = new String[] {"APPLE", "BANANA", "MANGO", "PEAR", "PINEAPPLE", "RED APPLE"};
             result.setText(classes[maxPos]);
             // Releases model resources if no longer used.
             model.close();

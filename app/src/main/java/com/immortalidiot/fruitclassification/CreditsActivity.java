@@ -6,11 +6,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 
 public class CreditsActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // deactivation of the status bar
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_credits);
     }
 
@@ -27,7 +33,7 @@ public class CreditsActivity extends AppCompatActivity {
     public void telegramSuomi(View v) {
         try {
             Intent telegram = new Intent(Intent.ACTION_VIEW);
-            telegram.setData(Uri.parse("https://t.me/@Suomi555"));
+            telegram.setData(Uri.parse("https://t.me/Suomi555"));
             startActivity(telegram);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -47,7 +53,7 @@ public class CreditsActivity extends AppCompatActivity {
     public void telegramTanyyaako(View v) {
         try {
             Intent telegram = new Intent((Intent.ACTION_VIEW));
-            telegram.setData(Uri.parse("https://t.me/@tanyyaako"));
+            telegram.setData(Uri.parse("https://t.me/tanyyaako"));
             startActivity(telegram);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -2,17 +2,17 @@
     <!-- Base application theme. -->
     <style name="Theme.CyberFruits" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/light_green</item>
+        <item name="colorPrimaryVariant">@color/dark_green</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorSecondary">@color/light_blue</item>
+        <item name="colorSecondaryVariant">@color/cyan</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>
