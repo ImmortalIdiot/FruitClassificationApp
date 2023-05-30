@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">CyberFruits</string>
-    <string name="Photo">Фото</string>
-    <string name="Gallery">Галлерея</string>
-    <string name="Start">Начать</string>
+    <string name="Photo">ФОТО</string>
+    <string name="Start">НАЧАТЬ</string>
     <string name="Exit">ВЫЙТИ</string>
-    <string name="Credits">Титры</string>
+    <string name="Credits">ТИТРЫ</string>
     <string name="Developers">РАЗРАБОТЧИКИ</string>
     <string name="Guidance">Под руководством</string>
     <string name="GoBack">НАЗАД</string>
