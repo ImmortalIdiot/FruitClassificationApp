@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">CyberFruits</string>
-    <string name="Photo">Photo</string>
-    <string name="Gallery">Gallery</string>
-    <string name="Start">Start</string>
-    <string name="Exit">EXIT</string>
-    <string name="Credits">Credits</string>
-    <string name="Developers">DEVELOPERS</string>
-    <string name="Guidance">Under the guidance of</string>
-    <string name="GoBack">Go back</string>
+    <string name="Photo">Фото</string>
+    <string name="Gallery">Галлерея</string>
+    <string name="Start">Начать</string>
+    <string name="Exit">ВЫЙТИ</string>
+    <string name="Credits">Титры</string>
+    <string name="Developers">РАЗРАБОТЧИКИ</string>
+    <string name="Guidance">Под руководством</string>
+    <string name="GoBack">НАЗАД</string>
     <string name="Suomi555"><a href="Suomi555">Suomi555</a></string>
     <string name="ImmortalIdiot"><a href="ImmortalIdiot">ImmortalIdiot</a></string>
     <string name="Tanyyaako"><a href="Tanyyaako">Tanyyaako</a></string>
